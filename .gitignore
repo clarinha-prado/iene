@@ -1,0 +1,34 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/walfrutas/node_modules
+/walfrutas/.pnp
+/walfrutas/.pnp.js
+
+# testing
+/walfrutas/coverage
+
+# next.js
+/walfrutas/.next/
+/walfrutas/out/
+
+# production
+/walfrutas/build
+
+# misc
+/walfrutas/.DS_Store
+/walfrutas/*.pem
+
+# debug
+/walfrutas/npm-debug.log*
+/walfrutas/yarn-debug.log*
+/walfrutas/yarn-error.log*
+
+# local env files
+/walfrutas/.env.local
+/walfrutas/.env.development.local
+/walfrutas/.env.test.local
+/walfrutas/.env.production.local
+
+# vercel
+/walfrutas/.vercel
