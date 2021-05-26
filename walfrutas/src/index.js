@@ -6,10 +6,19 @@ const posts = require('../data/posts.json');
 const lastPost = require('../data/lastPost.json');
 const cookies = require('../data/cookies.json');
 
+// create a custom timestamp format for log statements
+const SimpleNodeLogger = require('simple-node-logger'),
+    opts = {
+        logFilePath: 'log/walfrutas.log',
+        timestampFormat: 'DD-MM-YYYY HH:mm:ss'
+    },
+    log = SimpleNodeLogger.createSimpleLogger(opts);
+
 var waitTime = Math.random() * 5000 + 2000;
 
 (async () => {
-    console.log('Início da navegação');
+    log.info('');
+    log.info('Início da navegação');
 
     // abre o browser
     let browser = await puppeteer.launch({ headless: false });
@@ -41,9 +50,9 @@ var waitTime = Math.random() * 5000 + 2000;
         try {
             // verifica se a pagina inicial foi retornada
             await page.waitForSelector('[aria-label="Conta"]');
-            console.log('Login com email e senha')
+            log.info('Login com email e senha')
         } catch (err) {
-            console.log("Falha no login");
+            log.error("Falha no login");
             process.exit(1);
         }
 
@@ -51,7 +60,7 @@ var waitTime = Math.random() * 5000 + 2000;
         fs.writeFileSync('../data/cookies.json', JSON.stringify(currentCookies));
     } else {
         //User Already Logged In
-        console.log("Login com cookie")
+        log.info("Login com cookie")
         await page.setCookie(...cookies);
         await page.goto("https://www.facebook.com/", { waitUntil: "networkidle2" });
     }
@@ -62,12 +71,12 @@ var waitTime = Math.random() * 5000 + 2000;
     await page.click('[href="https://www.facebook.com/groups/?ref=bookmarks"]')
         .then(
             async () => {
-                console.log('Clicou em Grupos');
+                log.info('Clicou em Grupos');
                 await page.waitForTimeout(waitTime);
             }
         ).catch(
             () => {
-                console.log('Não conseguiu clicar em grupos');
+                log.error('Não conseguiu clicar em grupos');
                 process.exit(1);
             });
     // await page.mouse.click(104, 305);
@@ -84,13 +93,13 @@ var waitTime = Math.random() * 5000 + 2000;
     await page.click('[href="https://www.facebook.com/groups/brechoonlinecacapava/"]')
         .then(
             async () => {
-                console.log('Clicou no grupo brechó');
+                log.info('Clicou no grupo brechó');
                 await page.waitForTimeout(waitTime);
             }
         ).catch(
             (err) => {
-                console.log('Não conseguiu clicar no grupo brechó');
-                console.log(err.message);
+                log.error('Não conseguiu clicar no grupo brechó');
+                log.error(err.message);
                 process.exit(1);
             });
     await page.waitForTimeout(waitTime);
@@ -99,8 +108,12 @@ var waitTime = Math.random() * 5000 + 2000;
     // await page.waitForSelector('[aria-label="Vender algo"]');
 
     // clica em "Discussao"
-    await page.click('[href="/groups/brechoonlinecacapava/buy_sell_discussion/"]');
-    console.log('Clicou em discussão');
+    await page.click('[href="/groups/brechoonlinecacapava/buy_sell_discussion/"]')
+        .then(() => log.info('Clicou em discussão')
+        ).catch((err) => {
+            log.error('Não conseguiu clicar em discussão');
+            log.error(err.message);
+        });
     await page.waitForTimeout(waitTime);
 
     // clicar na caixa de texto
@@ -111,11 +124,11 @@ var waitTime = Math.random() * 5000 + 2000;
     const [button2] = await page.$x("//span[contains(., 'No que voc')]");
     await button2.click()
         .then(async () => {
-            console.log('Clicou na 1a. caixa de texto');
+            log.info('Clicou na 1a. caixa de texto');
             await page.waitForTimeout(waitTime);
         }).catch((err) => {
-            console.log('Não conseguiu clicar na caixa de texto');
-            console.log(err.message);
+            log.error('Não conseguiu clicar na caixa de texto');
+            log.error(err.message);
             process.exit(1);
         });
 
@@ -124,11 +137,11 @@ var waitTime = Math.random() * 5000 + 2000;
     const [button] = await page.$x("//div[contains(., 'Escreva algo')]");
     button.click()
         .then(
-            () => console.log("Clicou na 2a. caixa de texto")
+            () => log.info("Clicou na 2a. caixa de texto")
         ).catch(
             (err) => {
-                console.log("Não conseguiu clicar na caixa de texto");
-                console.log(err.message);
+                log.error("Não conseguiu clicar na caixa de texto");
+                log.error(err.message);
                 process.exit(1);
             }
         );
@@ -136,21 +149,21 @@ var waitTime = Math.random() * 5000 + 2000;
     // botão anexar img
     const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
-        await page.mouse.click(678, 480),
-        console.log('Clicou no upload de imagem')
+        await page.mouse.click(678, 480)
     ]);
+
     post = getNextPost();
     await fileChooser.accept([post.image])
         .then(() =>
-            console.log("Leu arquivo de imagem")
+            log.info("Leu arquivo de imagem")
         ).catch((err) => {
-            console.log('Não conseguiu ler o arquivo de imagem');
-            console.log(err.message);
+            log.error('Não conseguiu ler o arquivo de imagem');
+            log.error(err.message);
             process.exit(1);
         });
 
     await page.keyboard.type(post.text.join('\n'), { delay: 25 });
-    console.log('Digitou o texto');
+    log.info('Digitou o texto');
 
     // clicar em publicar
     await page.mouse.click(558, 232);
@@ -159,7 +172,7 @@ var waitTime = Math.random() * 5000 + 2000;
         await page.waitForTimeout(200);
     }
     await page.keyboard.press("Enter", { delay: 100 });
-    console.log('Publicou');
+    log.info('Publicou');
 
     // Close Browser
     await browser.close();
@@ -179,7 +192,12 @@ function getNextPost() {
     posts[index].image = posts[index].directory + posts[index].files[nextFile].fileName + ".jpg";
 
     lastPost.lastFileIndex[index].index = nextFile;
-    fs.writeFileSync('../data/lastPost.json', JSON.stringify(lastPost, null, 4));
+
+    try {
+        fs.writeFileSync('../data/lastPost.json', JSON.stringify(lastPost, null, 4));
+    } catch (error) {
+        log.error(error.message);
+    }
 
     return posts[index];
 }
