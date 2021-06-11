@@ -1,13 +1,13 @@
 {
-    "type": "detox",
+    "type": "fruit",
     "lastFileIndex": [
         {
             "type": "fruit",
-            "index": 3
+            "index": 6
         },
         {
             "type": "detox",
-            "index": 3
+            "index": 5
         }
     ]
 }

@@ -1,15 +1,17 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+//const dataDirectory = "../data";
+const dataDirectory = "../data";
 
-const data = require('../data/credential.json');
-const posts = require('../data/posts.json');
-const lastPost = require('../data/lastPost.json');
-const cookies = require('../data/cookies.json');
+const data = require(dataDirectory + '/credential.json');
+const posts = require(dataDirectory + '/posts.json');
+const lastPost = require(dataDirectory + '/lastPost.json');
+const cookies = require(dataDirectory + '/cookies.json');
 
 // create a custom timestamp format for log statements
 const SimpleNodeLogger = require('simple-node-logger'),
     opts = {
-        logFilePath: 'log/walfrutas.log',
+        logFilePath: './log/walfrutas.log',
         timestampFormat: 'DD-MM-YYYY HH:mm:ss'
     },
     log = SimpleNodeLogger.createSimpleLogger(opts);
@@ -149,7 +151,7 @@ var waitTime = Math.random() * 5000 + 2000;
     // botão anexar img
     const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
-        await page.mouse.click(678, 480)
+        await page.mouse.click(637, 480)
     ]);
 
     post = getNextPost();
@@ -194,7 +196,7 @@ function getNextPost() {
     lastPost.lastFileIndex[index].index = nextFile;
 
     try {
-        fs.writeFileSync('../data/lastPost.json', JSON.stringify(lastPost, null, 4));
+        fs.writeFileSync(dataDirectory + '/lastPost.json', JSON.stringify(lastPost, null, 4));
     } catch (error) {
         log.error(error.message);
     }
