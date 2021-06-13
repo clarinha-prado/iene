@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-//const dataDirectory = "../data";
+//const dataDirectory = "../data";   // para debug
 const dataDirectory = "../data";
 
 const data = require(dataDirectory + '/credential.json');
@@ -69,45 +69,13 @@ var waitTime = Math.random() * 5000 + 2000;
 
     await page.waitForTimeout(waitTime);
 
-    // clica na imagem do link Grupos
-    await page.click('[href="https://www.facebook.com/groups/?ref=bookmarks"]')
-        .then(
-            async () => {
-                log.info('Clicou em Grupos');
-                await page.waitForTimeout(waitTime);
-            }
-        ).catch(
-            () => {
-                log.error('Não conseguiu clicar em grupos');
-                process.exit(1);
-            });
-    // await page.mouse.click(104, 305);
-
-    // clica em um grupo de brecho
-    await page.mouse.move(104, 305);
-
-    await page.mouse.wheel({ deltaY: 1000 });
-    await page.waitForTimeout(waitTime);
-
-    await page.mouse.wheel({ deltaY: 1000 });
-    await page.waitForTimeout(waitTime);
-
-    await page.click('[href="https://www.facebook.com/groups/brechoonlinecacapava/"]')
-        .then(
-            async () => {
-                log.info('Clicou no grupo brechó');
-                await page.waitForTimeout(waitTime);
-            }
-        ).catch(
-            (err) => {
-                log.error('Não conseguiu clicar no grupo brechó');
-                log.error(err.message);
-                process.exit(1);
-            });
-    await page.waitForTimeout(waitTime);
-    // await page.goto("https://www.facebook.com/groups/925626047478339");
-    // await page.goto("https://www.facebook.com/groups/925626047478339", { waitUntil: "networkidle2" });
-    // await page.waitForSelector('[aria-label="Vender algo"]');
+    // acessa pagina do brechó
+    await page.goto("https://www.facebook.com/groups/brechoonlinecacapava/", { waitUntil: "networkidle2" })
+        .then(() => log.info('Acessou url do brechó')
+        ).catch((err) => {
+            log.error('Não conseguiu acessar a url do brechó');
+            log.error(err.message);
+        });
 
     // clica em "Discussao"
     await page.click('[href="/groups/brechoonlinecacapava/buy_sell_discussion/"]')
@@ -164,7 +132,7 @@ var waitTime = Math.random() * 5000 + 2000;
             process.exit(1);
         });
 
-    await page.keyboard.type(post.text.join('\n'), { delay: 25 });
+    await page.keyboard.type(post.text.join('\n'), { delay: 20 });
     log.info('Digitou o texto');
 
     // clicar em publicar
