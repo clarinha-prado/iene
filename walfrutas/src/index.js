@@ -87,10 +87,6 @@ var waitTime = Math.random() * 5000 + 2000;
     await page.waitForTimeout(waitTime);
 
     // clicar na caixa de texto
-    await page.mouse.move(713, 1763);
-    await page.mouse.wheel({ deltaY: 1000 });
-    await page.waitForTimeout(waitTime);
-
     const [button2] = await page.$x("//span[contains(., 'No que voc')]");
     await button2.click()
         .then(async () => {
@@ -116,11 +112,10 @@ var waitTime = Math.random() * 5000 + 2000;
             }
         );
 
-    // botão anexar img
-    const [fileChooser] = await Promise.all([
-        page.waitForFileChooser(),
-        await page.mouse.click(637, 480)
-    ]);
+    var futureFileChooser = page.waitForFileChooser();
+    // some button that triggers file selection
+    await page.mouse.click(636, 517);
+    var fileChooser = await futureFileChooser;
 
     post = getNextPost();
     await fileChooser.accept([post.image])

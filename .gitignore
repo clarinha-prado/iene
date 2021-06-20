@@ -1,4 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+*.log
+lastPost.json
+
+# keys
+/walfrutas/*.pem
+/walfrutas/*.ppk
+/walfrutas/user-dev_accessKeys.csv
 
 # dependencies
 /walfrutas/node_modules
@@ -17,7 +24,6 @@
 
 # misc
 /walfrutas/.DS_Store
-/walfrutas/*.pem
 
 # debug
 /walfrutas/npm-debug.log*
@@ -33,3 +39,5 @@
 # vercel
 /walfrutas/.vercel
 docs/comunicado - mLabs_ Gerenciamento de Redes Sociais em um só lugar!.html
+walfrutas/src/log/.log
+walfrutas/src/log/walfrutas.log
