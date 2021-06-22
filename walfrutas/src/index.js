@@ -7,6 +7,7 @@ const data = require(dataDirectory + '/credential.json');
 const posts = require(dataDirectory + '/posts.json');
 const lastPost = require(dataDirectory + '/lastPost.json');
 const cookies = require(dataDirectory + '/cookies.json');
+const groups = require(dataDirectory + '/groups.json');
 
 // create a custom timestamp format for log statements
 const SimpleNodeLogger = require('simple-node-logger'),
@@ -70,19 +71,21 @@ var waitTime = Math.random() * 5000 + 2000;
     await page.waitForTimeout(waitTime);
 
     // acessa pagina do brechó
-    await page.goto("https://www.facebook.com/groups/brechoonlinecacapava/", { waitUntil: "networkidle2" })
+    await page.goto(groups[1].url, { waitUntil: "networkidle2" })
         .then(() => log.info('Acessou url do brechó')
         ).catch((err) => {
             log.error('Não conseguiu acessar a url do brechó');
             log.error(err.message);
+            process.exit(1);
         });
 
     // clica em "Discussao"
-    await page.click('[href="/groups/brechoonlinecacapava/buy_sell_discussion/"]')
+    await page.click(groups[1].urlDiscussion)
         .then(() => log.info('Clicou em discussão')
         ).catch((err) => {
             log.error('Não conseguiu clicar em discussão');
             log.error(err.message);
+            process.exit(1);
         });
     await page.waitForTimeout(waitTime);
 
